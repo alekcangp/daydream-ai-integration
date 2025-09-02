@@ -6,13 +6,13 @@ import {
   LiveTranscriptionEvent,
   LiveTranscriptionEvents,
   useDeepgram,
-} from "../context/DeepgramContextProvider";
+} from "@/app/context/DeepgramContextProvider";
 import {
   MicrophoneEvents,
   MicrophoneState,
   useMicrophone,
-} from "../context/MicrophoneContextProvider";
-import { useDaydream } from "../context/DaydreamContextProvider";
+} from "@/app/context/MicrophoneContextProvider";
+import { useDaydream } from "@/app/context/DaydreamContextProvider";
 import Visualizer from "./Visualizer";
 import { MicrophoneIcon } from "./icons/MicrophoneIcon";
 import CanvaArea from "./CanvaArea";
