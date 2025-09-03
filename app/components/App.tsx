@@ -332,8 +332,8 @@ const App: () => JSX.Element = () => {
                 <CanvaArea ref={canvasRef} />
               </div>
 
-              {/* Video Output - positioned in upper center */}
-              <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[28rem] h-[28rem] z-10">
+              {/* Video Output - centered vertically */}
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[28rem] h-[28rem] z-10" style={{marginTop: '-8rem'}}>
                 <VideoOutput />
               </div>
 
@@ -346,7 +346,7 @@ const App: () => JSX.Element = () => {
               {microphone && microphoneState === MicrophoneState.Open && <Visualizer microphone={microphone} />}
 
               {/* Mic Button and Caption - positioned below video output */}
-              <div className="absolute top-[75%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-w-4xl mx-auto text-center flex flex-col items-center gap-4 z-20">
+              <div className="absolute top-[calc(50%+9rem)] left-1/2 transform -translate-x-1/2 max-w-4xl mx-auto text-center flex flex-col items-center gap-4 z-20">
                 <button
                   onClick={handleMicToggle}
                   className="bg-black/70 p-4 rounded-full hover:bg-black/80 transition-colors"
@@ -354,11 +354,16 @@ const App: () => JSX.Element = () => {
                 >
                   <MicrophoneIcon micOpen={microphone?.state === "recording"} className="w-8 h-8" />
                 </button>
-                {caption && <span className="bg-black/70 p-8">{caption}</span>}
+                {caption && <span className="bg-black/70 p-4 rounded-lg">{caption}</span>}
               </div>
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Footer Overlay */}
+      <div className="fixed bottom-0 left-0 right-0 h-16 bg-black/80 backdrop-blur-sm z-30 flex items-center justify-center">
+        <p className="text-white/60 text-sm"></p>
       </div>
 
       {/* Settings Modal */}

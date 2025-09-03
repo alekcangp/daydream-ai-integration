@@ -18,10 +18,11 @@ const CanvaArea = forwardRef<HTMLCanvasElement, CanvaAreaProps>(({ onCanvasReady
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Set canvas size
+    // Set canvas size to match its CSS dimensions (responsive to video output)
     const resizeCanvas = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
     };
 
     resizeCanvas();
@@ -91,11 +92,11 @@ const CanvaArea = forwardRef<HTMLCanvasElement, CanvaAreaProps>(({ onCanvasReady
   }, []);
 
   return (
-    <div className="w-full h-full">
+    <div className="w-[28rem] h-[28rem]">
       <canvas
         ref={canvasRef}
-        className="w-full h-full rounded-lg"
-        style={{ width: "100%", height: "100%" }}
+        className="w-[28rem] h-[28rem] rounded-lg"
+        style={{ width: "28rem", height: "28rem" }}
       />
     </div>
   );
