@@ -225,7 +225,7 @@ const App: () => JSX.Element = () => {
       clearTimeout(captionTimeout.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connectionState]);
+  }, [connectionState, streamParams]);
 
   useEffect(() => {
     if (!connection) return;

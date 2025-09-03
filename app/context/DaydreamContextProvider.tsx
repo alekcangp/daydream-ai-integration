@@ -49,7 +49,7 @@ export const DaydreamContextProvider: React.FC<DaydreamContextProviderProps> = (
   const [stream, setStream] = useState<StreamData | null>(null);
   const [streamParams, setStreamParams] = useState<StreamParams>({
     model_id: "stabilityai/sd-turbo",
-    prompt: "A beautiful scene",
+    prompt: "",
     prompt_interpolation_method: "slerp",
     normalize_prompt_weights: true,
     normalize_seed_weights: true,

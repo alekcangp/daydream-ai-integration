@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDaydream } from "../context/DaydreamContextProvider";
 
 interface SettingsModalProps {
@@ -11,6 +11,11 @@ interface SettingsModalProps {
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const { streamParams, setStreamParams, updateStreamParams, isLoading } = useDaydream();
   const [localParams, setLocalParams] = useState(streamParams);
+
+  // Sync localParams with streamParams when modal opens or streamParams changes
+  useEffect(() => {
+    setLocalParams(streamParams);
+  }, [streamParams, isOpen]);
 
   const handleSave = async () => {
     setStreamParams(localParams);
