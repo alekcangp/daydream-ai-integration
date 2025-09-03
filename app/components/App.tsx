@@ -65,9 +65,9 @@ const App: () => JSX.Element = () => {
     const autoStartStreaming = async () => {
       if (!stream) {
         try {
-          console.log("Auto-creating Daydream stream...");
+          
           await createStream();
-          console.log("Daydream stream created successfully");
+          
         } catch (error) {
           console.error("Failed to create Daydream stream:", error);
           return;
@@ -77,9 +77,9 @@ const App: () => JSX.Element = () => {
       // Auto-start microphone if not already running
       if (microphoneState === MicrophoneState.Ready) {
         try {
-          console.log("Auto-starting microphone...");
+          
           await startMicrophone();
-          console.log("Microphone started successfully");
+          
         } catch (error) {
           console.error("Failed to start microphone:", error);
         }
@@ -151,10 +151,10 @@ const App: () => JSX.Element = () => {
         // Update Daydream for final transcripts (more permissive)
         const shouldUpdateDaydream = isFinal;
 
-        console.log("🎨 [DEBUG] Processing transcript:", trimmedCaption, "isFinal:", isFinal);
+        
 
         if (shouldUpdateDaydream && stream && stream.id) {
-          console.log("🎨 [DEBUG] Sending transcript to Daydream:", trimmedCaption);
+          
 
           const updatedParams = {
             ...streamParams,
@@ -166,20 +166,20 @@ const App: () => JSX.Element = () => {
           try {
             await updateStreamParams(updatedParams);
             lastProcessedTranscript.current = trimmedCaption;
-            console.log("🎨 [DEBUG] Successfully sent to Daydream API");
+            
           } catch (error) {
             console.error("Failed to update Daydream parameters:", error);
           }
         } else if (shouldUpdateDaydream && !stream) {
-          console.log("🎨 [DEBUG] Final transcript received but no stream available - will retry in 500ms");
+          
 
           // Retry after a short delay in case stream state hasn't propagated yet
           setTimeout(async () => {
-            console.log("🎨 [DEBUG] Checking for stream availability after delay...");
-            console.log("🎨 [DEBUG] Current stream state from ref:", currentStreamRef.current);
+            
+            
 
             if (currentStreamRef.current) {
-              console.log("🎨 [DEBUG] Stream now available, retrying transcript update");
+              
 
               const updatedParams = {
                 ...streamParams,
@@ -191,12 +191,12 @@ const App: () => JSX.Element = () => {
               try {
                 await updateStreamParams(updatedParams);
                 lastProcessedTranscript.current = trimmedCaption;
-                console.log("🎨 [DEBUG] Successfully sent to Daydream API on retry");
+                
               } catch (error) {
                 console.error("Failed to update Daydream parameters on retry:", error);
               }
             } else {
-              console.log("🎨 [DEBUG] Stream still not available after delay");
+              
             }
           }, 500);
         }
