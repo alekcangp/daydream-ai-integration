@@ -24,9 +24,9 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://aura-tts-demo.deepgram.com"),
-  title: "Telling story",
-  description: `Deepgram's AI Agent Demo shows just how fast Speech-to-Text and Text-to-Speech can be.`,
+  metadataBase: new URL("https://daydream-ai-integration.vercel.app"),
+  title: "Storytelling",
+  description: `Storytelling application combines speech recognition with AI video generation, allowing users to speak naturally and watch their words transform into dynamic video content powered by the Daydream API.`,
   robots: {
     index: false,
     follow: false,
