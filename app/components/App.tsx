@@ -158,7 +158,9 @@ const App: () => JSX.Element = () => {
 
           const updatedParams = {
             ...streamParams,
-            prompt: trimmedCaption
+            prompt: streamParams.prompt && streamParams.prompt.trim()
+              ? `${streamParams.prompt}. ${trimmedCaption}`
+              : trimmedCaption
           };
 
           try {
@@ -181,7 +183,9 @@ const App: () => JSX.Element = () => {
 
               const updatedParams = {
                 ...streamParams,
-                prompt: trimmedCaption
+                prompt: streamParams.prompt && streamParams.prompt.trim()
+              ? `${streamParams.prompt}. ${trimmedCaption}`
+              : trimmedCaption
               };
 
               try {
