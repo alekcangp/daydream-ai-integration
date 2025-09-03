@@ -40,6 +40,65 @@ const App: () => JSX.Element = () => {
   const lastProcessedTranscript = useRef<string>("");
   const lastEmptyLogTime = useRef<number>(0);
   const currentStreamRef = useRef<any>(null);
+  const transcriptQueue = useRef<string[]>([]);
+  const lastSentPrompt = useRef<string>("");
+  const promptTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  // Function to build accumulated prompt from transcripts
+  const buildAccumulatedPrompt = () => {
+    // Include settings prompt if available
+    const settingsPrompt = streamParams.prompt && typeof streamParams.prompt === 'string' && streamParams.prompt.trim()
+      ? streamParams.prompt
+      : "";
+
+    // Combine settings prompt with accumulated transcripts
+    const transcriptsText = transcriptQueue.current.join(" ");
+    const fullPrompt = settingsPrompt
+      ? `${settingsPrompt} ${transcriptsText}`.trim()
+      : transcriptsText;
+
+    return fullPrompt;
+  };
+
+  // Function to send prompt to Daydream
+  const sendPromptToDaydream = async (prompt: string) => {
+    if (prompt === lastSentPrompt.current) {
+      return; // Don't send duplicate prompts
+    }
+
+    lastSentPrompt.current = prompt;
+
+    const updatedParams = {
+      ...streamParams,
+      prompt: prompt
+    };
+
+    try {
+      await updateStreamParams(updatedParams);
+      console.log("🎨 [DEBUG] Sent accumulated prompt to Daydream:", prompt);
+    } catch (error) {
+      console.error("Failed to update Daydream parameters:", error);
+    }
+  };
+
+  // Function to check if we should send the prompt
+  const checkAndSendPrompt = () => {
+    const currentPrompt = buildAccumulatedPrompt();
+
+    // Send if we have more than 3 transcripts OR if there's a timeout
+    if (transcriptQueue.current.length > 3 || promptTimeout.current) {
+      if (currentPrompt.trim()) {
+        sendPromptToDaydream(currentPrompt);
+      }
+
+      // Clear timeout after sending
+      if (promptTimeout.current) {
+        clearTimeout(promptTimeout.current);
+        promptTimeout.current = null;
+      }
+      // Don't reset queue - keep accumulating
+    }
+  };
 
   const handleMicToggle = async () => {
     if (microphoneState === MicrophoneState.Open) {
@@ -156,20 +215,26 @@ const App: () => JSX.Element = () => {
         if (shouldUpdateDaydream && stream && stream.id) {
           
 
-          const updatedParams = {
-            ...streamParams,
-            prompt: streamParams.prompt && streamParams.prompt.trim()
-              ? `${streamParams.prompt}. ${trimmedCaption}`
-              : trimmedCaption
-          };
-
-          try {
-            await updateStreamParams(updatedParams);
-            lastProcessedTranscript.current = trimmedCaption;
-            
-          } catch (error) {
-            console.error("Failed to update Daydream parameters:", error);
+          // Fixed sliding window of 3 transcripts: always remove from beginning, add to end
+          if (transcriptQueue.current.length >= 3) {
+            // Remove oldest transcript from beginning using slice
+            transcriptQueue.current = transcriptQueue.current.slice(1);
           }
+
+          // Add new transcript to end
+          transcriptQueue.current.push(trimmedCaption);
+
+          // Set timeout for 1 second if not already set
+          if (!promptTimeout.current) {
+            promptTimeout.current = setTimeout(() => {
+              checkAndSendPrompt();
+            }, 1000);
+          }
+
+          // Check if we should send the prompt immediately
+          checkAndSendPrompt();
+
+          lastProcessedTranscript.current = trimmedCaption;
         } else if (shouldUpdateDaydream && !stream) {
           
 
@@ -181,20 +246,26 @@ const App: () => JSX.Element = () => {
             if (currentStreamRef.current) {
               
 
-              const updatedParams = {
-                ...streamParams,
-                prompt: streamParams.prompt && streamParams.prompt.trim()
-              ? `${streamParams.prompt}. ${trimmedCaption}`
-              : trimmedCaption
-              };
-
-              try {
-                await updateStreamParams(updatedParams);
-                lastProcessedTranscript.current = trimmedCaption;
-                
-              } catch (error) {
-                console.error("Failed to update Daydream parameters on retry:", error);
+              // Fixed sliding window of 3 transcripts: always remove from beginning, add to end
+              if (transcriptQueue.current.length >= 3) {
+                // Remove oldest transcript from beginning using slice
+                transcriptQueue.current = transcriptQueue.current.slice(1);
               }
+
+              // Add new transcript to end
+              transcriptQueue.current.push(trimmedCaption);
+
+              // Set timeout for 1 second if not already set
+              if (!promptTimeout.current) {
+                promptTimeout.current = setTimeout(() => {
+                  checkAndSendPrompt();
+                }, 1000);
+              }
+
+              // Check if we should send the prompt immediately
+              checkAndSendPrompt();
+
+              lastProcessedTranscript.current = trimmedCaption;
             } else {
               
             }

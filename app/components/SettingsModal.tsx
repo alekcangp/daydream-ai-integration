@@ -66,7 +66,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
               <p className="text-xs text-gray-400 mb-2">Guides the model in terms of what kind of output image to create</p>
               <input
                 type="text"
-                value={localParams.prompt}
+                value={Array.isArray(localParams.prompt) ? '' : (localParams.prompt || '')}
                 onChange={(e) => updateParam("prompt", e.target.value)}
                 className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white"
                 placeholder="Enter your prompt..."

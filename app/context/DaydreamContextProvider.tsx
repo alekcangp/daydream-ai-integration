@@ -10,6 +10,11 @@ interface StreamData {
   whip_url: string;
 }
 
+export interface WeightedPrompt {
+  text: string;
+  weight: number;
+}
+
 interface StreamParams {
   model_id: string;
   prompt: string;
@@ -167,7 +172,10 @@ export const DaydreamContextProvider: React.FC<DaydreamContextProviderProps> = (
             "Content-Type": "application/json",
             Authorization: `Bearer ${process.env.NEXT_PUBLIC_DAYDREAM_API_KEY}`,
           },
-          body: JSON.stringify({ params }),
+          body: JSON.stringify({ 
+            "model_id": "streamdiffusion",
+            "pipeline": "live-video-to-video", 
+            params }),
         }
       )
         .then(response => {
